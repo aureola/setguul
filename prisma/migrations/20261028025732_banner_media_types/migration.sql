@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE `Banner`
+    ADD COLUMN `type` ENUM('IMAGE', 'VIDEO', 'EMBED') NOT NULL DEFAULT 'IMAGE',
+    ADD COLUMN `videoUrl` VARCHAR(191) NULL,
+    ADD COLUMN `embedHtml` TEXT NULL,
+    MODIFY COLUMN `imageUrl` VARCHAR(191) NULL;
