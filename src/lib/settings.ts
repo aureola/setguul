@@ -8,6 +8,8 @@ const DEFAULTS: Record<string, string> = {
   show_view_count: "false",
   comments_enabled: "true",
   article_url_mode: "slug",
+  offline_enabled: "false",
+  offline_message: "Сайт түр хугацаанд ажиллахгүй байна. Удахгүй эргэж орж ирнэ үү.",
 };
 
 export async function getSettings(): Promise<Record<string, string>> {

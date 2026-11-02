@@ -1,17 +1,24 @@
 import SiteHeader from "@/components/site/SiteHeader";
 import SiteFooter from "@/components/site/SiteFooter";
+import OfflineScreen from "@/components/site/OfflineScreen";
 import { getSettings } from "@/lib/settings";
 import { getMenuItems } from "@/lib/menu";
 import { getFooterPages } from "@/lib/pages";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [settings, menuItems, footerPages] = await Promise.all([
+  const [settings, menuItems, footerPages, session] = await Promise.all([
     getSettings(),
     getMenuItems(),
     getFooterPages(),
+    auth(),
   ]);
+
+  if (settings.offline_enabled === "true" && !session) {
+    return <OfflineScreen siteTitle={settings.site_title} message={settings.offline_message} />;
+  }
 
   return (
     <div

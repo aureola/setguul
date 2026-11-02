@@ -96,6 +96,28 @@ export default function SettingsForm({ initial }: { initial: Record<string, stri
           </select>
         </label>
 
+        <div className="space-y-3 border-t border-border pt-5">
+          <label className="flex items-start gap-2.5 text-sm">
+            <input
+              type="checkbox"
+              checked={values.offline_enabled === "true"}
+              onChange={(e) => update("offline_enabled", e.target.checked ? "true" : "false")}
+              className="mt-0.5 h-4 w-4 rounded border-border accent-accent"
+            />
+            Сайтыг offline горимд оруулах (admin эрхээр нэвтрээгүй хэрэглэгчдэд offline цонх харагдана)
+          </label>
+
+          <label className="block text-sm font-semibold">
+            Offline үеийн мессеж
+            <textarea
+              value={values.offline_message ?? ""}
+              onChange={(e) => update("offline_message", e.target.value)}
+              rows={2}
+              className={`mt-1.5 font-normal ${fieldClass}`}
+            />
+          </label>
+        </div>
+
         <label className="block text-sm font-semibold">
           Хөлийн текст
           <textarea
