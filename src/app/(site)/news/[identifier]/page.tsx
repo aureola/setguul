@@ -6,12 +6,15 @@ import { getArticleByIdentifier, getSidebarArticles, incrementViewCount } from "
 import { getArticlePath } from "@/lib/article-url";
 import { getActiveBanners } from "@/lib/banners";
 import { getCommentsByArticle } from "@/lib/comments";
-import { formatDate } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
 import { sanitizeArticleHtml } from "@/lib/sanitize";
 import { getSetting } from "@/lib/settings";
+import { getSiteUrl } from "@/lib/site-url";
 import { auth } from "@/lib/auth";
 import CommentsSection from "@/components/site/CommentsSection";
 import ArticleSidebar from "@/components/site/ArticleSidebar";
+import ArticleShare from "@/components/site/ArticleShare";
+import ArticleReactions from "@/components/site/ArticleReactions";
 import { UserIcon, CalendarIcon, EyeIcon } from "@/components/admin/ui/icons";
 
 export async function generateMetadata({
@@ -67,17 +70,20 @@ export default async function ArticlePage({
 
   await incrementViewCount(article.id);
 
-  const [session, showViewCount, commentsEnabledSetting, urlMode, comments, sidebarArticles, sidebarBanners] = await Promise.all([
+  const [session, showViewCount, authorVisibility, commentsEnabledSetting, urlMode, comments, sidebarArticles, sidebarBanners] = await Promise.all([
     auth(),
     getSetting("show_view_count"),
+    getSetting("article_author_visibility"),
     getSetting("comments_enabled"),
     getSetting("article_url_mode"),
     getCommentsByArticle(article.id),
     getSidebarArticles(article.id),
     getActiveBanners("article_sidebar"),
   ]);
-  const canSeeViewCount = showViewCount === "true" && session?.user?.role === "ADMINISTRATOR";
+  const canSeeViewCount = showViewCount === "all" || Boolean(session?.user);
+  const canSeeArticleAuthor = authorVisibility !== "authenticated" || Boolean(session?.user);
   const commentsEnabled = article.commentsEnabled ?? commentsEnabledSetting === "true";
+  const shareUrl = new URL(getArticlePath(article, urlMode), getSiteUrl()).toString();
 
   return (
     <div className="container-page flex flex-col gap-10 py-12 lg:flex-row lg:items-start">
@@ -97,14 +103,16 @@ export default async function ArticlePage({
         </div>
         <h1 className="mt-3 text-4xl font-black uppercase leading-tight">{article.title}</h1>
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted">
-          <span className="inline-flex items-center gap-1.5">
-            <UserIcon className="h-4 w-4" />
-            {article.author.name}
-          </span>
+          {canSeeArticleAuthor && (
+            <span className="inline-flex items-center gap-1.5">
+              <UserIcon className="h-4 w-4" />
+              {article.author.name}
+            </span>
+          )}
           {article.publishedAt && (
             <span className="inline-flex items-center gap-1.5">
               <CalendarIcon className="h-4 w-4" />
-              <time>{formatDate(article.publishedAt)}</time>
+              <time>{formatDateTime(article.publishedAt)}</time>
             </span>
           )}
           {canSeeViewCount && (
@@ -114,6 +122,7 @@ export default async function ArticlePage({
             </span>
           )}
         </div>
+        <ArticleShare title={article.title} url={shareUrl} />
 
         {article.coverImage && (
           <div className="relative mt-8 aspect-video w-full overflow-hidden rounded-xl border border-border">
@@ -126,6 +135,7 @@ export default async function ArticlePage({
           dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(article.content) }}
         />
 
+        <ArticleReactions slug={article.slug} />
         {commentsEnabled && <CommentsSection slug={article.slug} initialComments={comments} />}
       </article>
 

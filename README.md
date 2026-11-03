@@ -64,8 +64,17 @@
 
 ## Production build
 
+Datacom зэрэг нөөц хязгаартай hosting-ийн terminal дээр build хийхдээ:
+
 ```bash
-npm run build
+RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npm run build
+```
+
+Эдгээр тохиргоо build үеийн зэрэгцээ ажиллагаа болон thread pool-ийг хязгаарлаж,
+серверийн санах ой/CPU-ийн ачааллыг багасгахад тусална. `npm start`-ийг Node.js
+App (Passenger)-аар ажиллуулна:
+
+```bash
 npm start
 ```
 
@@ -76,26 +85,33 @@ npm start
    - Application root: repo-г байршуулсан фолдер
    - Application startup file: **`app.js`**
    - Application mode: `production`
-2. cPanel-ийн өгсөн "Enter to the virtual environment" командаар орж:
-   ```bash
-   npm install
-   npm run build
-   ```
-3. `.env` файлыг серверт үүсгэж (эсвэл cPanel-ийн "Environment variables"
-   хэсэгт тохируулж) дараах утгуудыг тавих:
-   - `DATABASE_URL` — Datacom-ийн MySQL холболтын мэдээлэл
+2. cPanel → **MySQL Databases** хэсэгт database болон database user үүсгээд,
+   хэрэглэгчид тухайн database дээр бүх эрхийг өгнө. Hostname, database нэр,
+   username, password-оо тэмдэглэж авна.
+3. cPanel → **Setup Node.js App** → **Environment variables** хэсэгт (эсвэл
+   Application root доторх `.env` файлд) дараах утгуудыг `npm run build`-ээс
+   өмнө тохируулна:
+   - `DATABASE_URL` — `mysql://USER:PASSWORD@HOST:3306/DATABASE` хэлбэртэй.
+     cPanel-ээс өгсөн host, database нэр, username, password-оо ашиглана.
+     Нууц үгэнд `@`, `#`, `:` зэрэг тэмдэг байвал URL encoding хийнэ.
    - `NEXTAUTH_SECRET` — `openssl rand -base64 32`-оор үүсгэсэн урт нууц түлхүүр
    - `NEXTAUTH_URL` — сайтын бодит домэйн (жишээ нь `https://setguul.mn`)
    - `UPLOAD_DIR` — `public/uploads` (өөрчлөх шаардлагагүй)
-4. Миграц хийх (анх удаа болон schema өөрчлөгдөх бүрт):
+4. cPanel-ийн өгсөн "Enter to the virtual environment" командаар орж:
    ```bash
-   npx prisma migrate deploy
+   npm install
    ```
-5. Эхний admin хэрэглэгч, анхны ангилал/цэс/тохиргоо үүсгэх (зөвхөн анх удаа):
+   Дараа нь дээрх **Production build** хэсгийн командаар build хийнэ.
+5. Шинэ/хоосон database-д хүснэгтүүд үүсгэх, мөн schema өөрчлөгдөх бүрт:
+   ```bash
+   npm run db:migrate
+   ```
+6. Эхний admin хэрэглэгч, анхны ангилал/цэс/тохиргоо үүсгэх (зөвхөн анх удаа):
    ```bash
    npm run db:seed
    ```
-6. cPanel дээрээс Node.js App-аа **Restart** хийх.
+   Seed-ийн анхны нууц үг `pass` тул нэвтэрсний дараа шууд солино уу.
+7. cPanel дээрээс Node.js App-аа **Restart** хийх.
 
 `app.js` нь Passenger-ийн `PORT` environment variable-ийг уншиж Next.js
 серверийг ажиллуулдаг энгийн Node.js HTTP server wrapper юм.

@@ -64,14 +64,16 @@ export default function SettingsForm({ initial }: { initial: Record<string, stri
           </div>
         </label>
 
-        <label className="flex items-start gap-2.5 text-sm">
-          <input
-            type="checkbox"
-            checked={values.show_view_count === "true"}
-            onChange={(e) => update("show_view_count", e.target.checked ? "true" : "false")}
-            className="mt-0.5 h-4 w-4 rounded border-border accent-accent"
-          />
-          Уншсан тоог admin эрхээр нэвтэрсэн хэрэглэгчид мэдээний хуудсанд харуулах
+        <label className="block text-sm font-semibold">
+          Мэдээний уншсан тоог харуулах
+          <select
+            value={values.show_view_count === "all" ? "all" : "authenticated"}
+            onChange={(e) => update("show_view_count", e.target.value)}
+            className={`mt-1.5 font-normal ${fieldClass}`}
+          >
+            <option value="authenticated">Зөвхөн сайтад нэвтэрсэн хэрэглэгчид</option>
+            <option value="all">Бүх хэрэглэгчид</option>
+          </select>
         </label>
 
         <label className="flex items-start gap-2.5 text-sm">
@@ -82,6 +84,18 @@ export default function SettingsForm({ initial }: { initial: Record<string, stri
             className="mt-0.5 h-4 w-4 rounded border-border accent-accent"
           />
           Сэтгэгдэл бичих боломжийг бүх мэдээнд үндсэн тохиргоогоор зөвшөөрөх (тус мэдээ бүрт энэхүү тохиргоог дарж болно)
+        </label>
+
+        <label className="block text-sm font-semibold">
+          Мэдээний author хэсгийг харуулах
+          <select
+            value={values.article_author_visibility === "authenticated" ? "authenticated" : "all"}
+            onChange={(e) => update("article_author_visibility", e.target.value)}
+            className={`mt-1.5 font-normal ${fieldClass}`}
+          >
+            <option value="all">Бүх хэрэглэгчид</option>
+            <option value="authenticated">Зөвхөн сайтад нэвтэрсэн хэрэглэгчид</option>
+          </select>
         </label>
 
         <label className="block text-sm font-semibold">
