@@ -30,11 +30,10 @@ export default function SiteHeader({
   const router = useRouter();
 
   useEffect(() => {
-    const nav = desktopNavRef.current;
-    const measure = measureRef.current;
-    if (!nav || !measure) return;
-
     function updateVisibleMenuCount() {
+      const nav = desktopNavRef.current;
+      const measure = measureRef.current;
+      if (!nav || !measure) return;
       if (nav.clientWidth === 0) return;
 
       const navStyle = window.getComputedStyle(nav);
@@ -73,6 +72,9 @@ export default function SiteHeader({
     }
 
     updateVisibleMenuCount();
+    const nav = desktopNavRef.current;
+    const measure = measureRef.current;
+    if (!nav || !measure) return;
     const observer = new ResizeObserver(updateVisibleMenuCount);
     observer.observe(nav);
     observer.observe(measure);
