@@ -19,10 +19,86 @@ export default function SiteHeader({
   menuItems: MenuItem[];
 }) {
   const [open, setOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [visibleMenuCount, setVisibleMenuCount] = useState(menuItems.length);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const desktopNavRef = useRef<HTMLElement>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const nav = desktopNavRef.current;
+    const measure = measureRef.current;
+    if (!nav || !measure) return;
+
+    function updateVisibleMenuCount() {
+      if (nav.clientWidth === 0) return;
+
+      const navStyle = window.getComputedStyle(nav);
+      const availableWidth =
+        nav.clientWidth -
+        Number.parseFloat(navStyle.paddingLeft) -
+        Number.parseFloat(navStyle.paddingRight);
+      const gap = Number.parseFloat(navStyle.columnGap) || 0;
+      const measuredItems = Array.from(
+        measure.querySelectorAll<HTMLElement>("[data-menu-measure]"),
+      );
+      const itemWidths = measuredItems
+        .filter((item) => item.dataset.menuMeasure !== "more")
+        .map((item) => item.getBoundingClientRect().width);
+      const moreWidth =
+        measuredItems.find((item) => item.dataset.menuMeasure === "more")?.getBoundingClientRect().width ?? 0;
+
+      const allItemsWidth =
+        itemWidths.reduce((total, width) => total + width, 0) +
+        Math.max(0, itemWidths.length - 1) * gap;
+
+      if (allItemsWidth <= availableWidth) {
+        setVisibleMenuCount(itemWidths.length);
+        return;
+      }
+
+      let usedWidth = moreWidth;
+      let visibleCount = 0;
+      for (const width of itemWidths) {
+        const nextWidth = usedWidth + gap + width;
+        if (nextWidth > availableWidth) break;
+        usedWidth = nextWidth;
+        visibleCount += 1;
+      }
+      setVisibleMenuCount(visibleCount);
+    }
+
+    updateVisibleMenuCount();
+    const observer = new ResizeObserver(updateVisibleMenuCount);
+    observer.observe(nav);
+    observer.observe(measure);
+    return () => observer.disconnect();
+  }, [menuItems]);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+
+    function onPointerDown(event: PointerEvent) {
+      if (event.target instanceof Node && !moreMenuRef.current?.contains(event.target)) {
+        setMoreOpen(false);
+      }
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setMoreOpen(false);
+    }
+
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [moreOpen]);
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -45,7 +121,7 @@ export default function SiteHeader({
   return (
     <header className="relative border-b border-border/60">
       <div className="container-page flex h-20 items-center justify-between">
-        <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
+        <Link href="/" className="flex shrink-0 items-center" onClick={() => setOpen(false)}>
           <Image
             src="/setguullogo.png"
             alt={siteTitle}
@@ -56,15 +132,82 @@ export default function SiteHeader({
           />
         </Link>
 
-        <nav className="hidden items-center gap-8 text-sm font-semibold tracking-wide md:flex">
-          {menuItems.map((item) => (
-            <Link key={item.id} href={item.url} className="uppercase hover:text-accent">
+        <nav
+          ref={desktopNavRef}
+          aria-label="Үндсэн цэс"
+          className="relative hidden min-w-0 flex-1 items-center gap-4 overflow-visible pl-6 text-xs font-semibold tracking-wide md:flex lg:gap-5 lg:text-sm"
+        >
+          {menuItems.slice(0, visibleMenuCount).map((item) => (
+            <Link key={item.id} href={item.url} className="shrink-0 whitespace-nowrap uppercase hover:text-accent">
               {item.label}
             </Link>
           ))}
+          {visibleMenuCount < menuItems.length && (
+            <div
+              ref={moreMenuRef}
+              className="relative shrink-0"
+              onMouseEnter={() => setMoreOpen(true)}
+              onMouseLeave={() => setMoreOpen(false)}
+              onBlur={(event) => {
+                if (
+                  !(event.relatedTarget instanceof Node) ||
+                  !event.currentTarget.contains(event.relatedTarget)
+                ) {
+                  setMoreOpen(false);
+                }
+              }}
+            >
+              <button
+                type="button"
+                aria-expanded={moreOpen}
+                aria-controls="site-more-menu"
+                onFocus={() => setMoreOpen(true)}
+                className="flex items-center gap-1 whitespace-nowrap uppercase hover:text-accent"
+              >
+                Бусад
+                <svg viewBox="0 0 16 16" fill="none" className="h-3 w-3" aria-hidden="true">
+                  <path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </button>
+              {moreOpen && (
+                <div
+                  id="site-more-menu"
+                  className="absolute right-0 top-full z-50 max-h-[70vh] min-w-48 overflow-y-auto rounded-md border border-border bg-background p-2 text-sm shadow-lg"
+                >
+                  {menuItems.slice(visibleMenuCount).map((item) => (
+                    <Link
+                      key={item.id}
+                      href={item.url}
+                      onClick={() => setMoreOpen(false)}
+                      className="block rounded px-3 py-2 uppercase hover:bg-border/40 hover:text-accent"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          <div
+            ref={measureRef}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-0 top-0 flex w-max items-center gap-4 pl-6 text-xs font-semibold tracking-wide invisible lg:gap-5 lg:text-sm"
+          >
+            {menuItems.map((item) => (
+              <span key={item.id} data-menu-measure className="shrink-0 whitespace-nowrap uppercase">
+                {item.label}
+              </span>
+            ))}
+            <span data-menu-measure="more" className="flex shrink-0 items-center gap-1 whitespace-nowrap uppercase">
+              Бусад
+              <svg viewBox="0 0 16 16" fill="none" className="h-3 w-3" aria-hidden="true">
+                <path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </span>
+          </div>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex shrink-0 items-center gap-4">
           <button
             type="button"
             aria-label="Хайх"
