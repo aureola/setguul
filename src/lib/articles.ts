@@ -44,6 +44,51 @@ export async function getLatestArticles(take = 8, skip = 0) {
   return articles.map(withThumbnailFallback);
 }
 
+export async function getMenuCategoriesWithArticles(menuItems: { url: string }[]) {
+  const categorySlugs = [
+    ...new Set(
+      menuItems.flatMap((item) => {
+        const match = item.url.match(/^\/category\/([^/?#]+)\/?$/);
+        return match ? [match[1]] : [];
+      }),
+    ),
+  ];
+
+  if (categorySlugs.length === 0) return [];
+
+  const categories = await prisma.category.findMany({
+    where: { slug: { in: categorySlugs } },
+    select: {
+      slug: true,
+      nameMn: true,
+      articles: {
+        where: { status: "PUBLISHED" },
+        orderBy: { publishedAt: "desc" },
+        take: 4,
+        select: { ...articleListSelect(), content: true },
+      },
+    },
+  });
+  const categoriesBySlug = new Map(
+    categories.map((category) => [category.slug, category] as const),
+  );
+  const addedSlugs = new Set<string>();
+
+  return menuItems.flatMap((item) => {
+    const match = item.url.match(/^\/category\/([^/?#]+)\/?$/);
+    if (!match || addedSlugs.has(match[1])) return [];
+
+    const category = categoriesBySlug.get(match[1]);
+    if (!category || category.articles.length === 0) return [];
+
+    addedSlugs.add(category.slug);
+    return [{
+      ...category,
+      articles: category.articles.map(withThumbnailFallback),
+    }];
+  });
+}
+
 export async function getArticlesByCategory(categorySlug: string, take = 20, skip = 0) {
   const articles = await prisma.article.findMany({
     where: { status: "PUBLISHED", categories: { some: { slug: categorySlug } } },
