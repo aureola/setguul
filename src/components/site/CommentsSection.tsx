@@ -55,6 +55,11 @@ export default function CommentsSection({
       <h2 className="text-xl font-black uppercase">Сэтгэгдэл ({comments.length})</h2>
 
       <form onSubmit={handleSubmit} className="mt-6 max-w-xl space-y-3">
+        <p className="rounded-md border border-border bg-border/30 px-3 py-2 text-sm text-muted">
+          <strong className="text-foreground">Анхаар!</strong> Та сэтгэгдэл бичихдээ хууль зүйн болон ёс
+          суртахууныг баримтална уу. Ёс бус сэтгэгдлийг админ устгах эрхтэй. Мэдээний сэтгэгдэлд
+          setguul.mn сайт хариуцлага хүлээхгүй.
+        </p>
         {error && (
           <p className="rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-400">
             {error}
