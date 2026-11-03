@@ -24,6 +24,7 @@ interface ArticleData {
   status: "DRAFT" | "PUBLISHED";
   publishedAt: string | null;
   commentsEnabled: boolean | null;
+  isFeatured: boolean;
 }
 
 function toLocalDateTimeInput(iso: string | null): string {
@@ -67,6 +68,7 @@ export default function ArticleForm({
   const [commentsEnabled, setCommentsEnabled] = useState(
     initial?.commentsEnabled ?? defaultCommentsEnabled,
   );
+  const [isFeatured, setIsFeatured] = useState(initial?.isFeatured ?? false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -117,6 +119,7 @@ export default function ArticleForm({
       categoryIds,
       status,
       commentsEnabled,
+      isFeatured,
     };
     if (publishedAt) {
       payload.publishedAt = new Date(publishedAt).toISOString();
@@ -246,6 +249,18 @@ export default function ArticleForm({
               Нийтлэх {!canPublish && "(эрхгүй)"}
             </label>
           </fieldset>
+        </Card>
+
+        <Card>
+          <label className="flex items-start gap-2.5 text-sm">
+            <input
+              type="checkbox"
+              checked={isFeatured}
+              onChange={(e) => setIsFeatured(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-border accent-accent"
+            />
+            <span className="font-semibold">Онцлох мэдээ болгох</span>
+          </label>
         </Card>
 
         <Card>

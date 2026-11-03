@@ -15,6 +15,7 @@ const createSchema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
   publishedAt: z.string().datetime().optional().nullable(),
   commentsEnabled: z.boolean().optional().nullable(),
+  isFeatured: z.boolean().optional(),
 });
 
 export async function GET() {
@@ -63,6 +64,7 @@ export async function POST(request: Request) {
       categories: { connect: data.categoryIds.map((id) => ({ id })) },
       authorId: user.id,
       status,
+      isFeatured: data.isFeatured ?? false,
       commentsEnabled: data.commentsEnabled ?? null,
       publishedAt: data.publishedAt
         ? new Date(data.publishedAt)

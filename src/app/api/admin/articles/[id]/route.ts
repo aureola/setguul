@@ -15,6 +15,7 @@ const updateSchema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED"]).optional(),
   publishedAt: z.string().datetime().optional().nullable(),
   commentsEnabled: z.boolean().optional().nullable(),
+  isFeatured: z.boolean().optional(),
 });
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -77,6 +78,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       ...(data.categoryIds ? { categories: { set: data.categoryIds.map((cid) => ({ id: cid })) } } : {}),
       status,
       publishedAt,
+      isFeatured: data.isFeatured ?? article.isFeatured,
       commentsEnabled: data.commentsEnabled === undefined ? article.commentsEnabled : data.commentsEnabled,
     },
   });

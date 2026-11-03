@@ -26,7 +26,7 @@ function withThumbnailFallback<T extends { coverImage: string | null; content: s
 
 export async function getFeaturedArticle() {
   const article = await prisma.article.findFirst({
-    where: { status: "PUBLISHED" },
+    where: { status: "PUBLISHED", isFeatured: true },
     orderBy: { publishedAt: "desc" },
     select: { ...articleListSelect(), content: true },
   });

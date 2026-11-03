@@ -56,6 +56,7 @@ model Article {
   content     String        @db.LongText
   coverImage  String?
   status      ArticleStatus @default(DRAFT)
+  isFeatured  Boolean       @default(false)
   viewCount   Int           @default(0)
   // null = inherit the site-wide "comments_enabled" setting; true/false = explicit per-article override
   commentsEnabled Boolean?

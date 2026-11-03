@@ -47,6 +47,7 @@ export default async function EditArticlePage({
           status: article.status,
           publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
           commentsEnabled: article.commentsEnabled,
+          isFeatured: article.isFeatured,
         }}
       />
     </div>

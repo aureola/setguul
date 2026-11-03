@@ -6,8 +6,7 @@ import { getFeaturedArticle, getLatestArticles } from "@/lib/articles";
 import { getSetting } from "@/lib/settings";
 
 export default async function HomePage() {
-  const [tagline, urlMode, featured, latest, usefulReads] = await Promise.all([
-    getSetting("site_tagline"),
+  const [urlMode, featured, latest, usefulReads] = await Promise.all([
     getSetting("article_url_mode"),
     getFeaturedArticle(),
     getLatestArticles(8),
@@ -18,7 +17,7 @@ export default async function HomePage() {
 
   return (
     <div className="pb-20">
-      <Hero tagline={tagline} article={featured} urlMode={urlMode} />
+      <Hero article={featured} urlMode={urlMode} />
 
       <section className="container-page mt-16">
         <UsefulReadsCarousel articles={usefulReads} urlMode={urlMode} />
