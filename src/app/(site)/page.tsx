@@ -30,7 +30,7 @@ export default async function HomePage() {
       {categories.map((category) => (
         <section key={category.slug} className="container-page mt-16">
           <div className="flex flex-col gap-8 lg:flex-row">
-            <div className="shrink-0">
+            <div className="lg:w-48 lg:shrink-0">
               <h2 className="text-sm font-bold uppercase tracking-widest text-muted">
                 {category.nameMn}
               </h2>
