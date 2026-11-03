@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -61,8 +62,14 @@ export default function AdminSidebar({
   return (
     <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border bg-surface">
       <div className="border-b border-border p-6">
-        <Link href="/admin/dashboard" className="text-xl font-extrabold tracking-tight">
-          <span className="text-accent">setguul</span>.mn
+        <Link href="/admin/dashboard" className="flex items-center">
+          <Image
+            src="/setguullogo.png"
+            alt="setguul.mn"
+            width={500}
+            height={122}
+            className="h-8 w-auto"
+          />
         </Link>
         <p className="mt-1 text-xs text-muted">Админ панел</p>
       </div>

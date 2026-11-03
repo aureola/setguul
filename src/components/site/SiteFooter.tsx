@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import SubscribeForm from "./SubscribeForm";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "./SocialIcons";
@@ -39,9 +40,13 @@ export default function SiteFooter({
       </div>
       <div className="border-t border-border/60 py-6">
         <div className="container-page flex flex-col items-center justify-between gap-3 text-xs text-muted md:flex-row">
-          <span className="text-base font-extrabold text-foreground">
-            <span className="text-accent">{siteTitle.split(".")[0]}</span>.mn
-          </span>
+          <Image
+            src="/setguullogo.png"
+            alt={siteTitle}
+            width={500}
+            height={122}
+            className="h-7 w-auto"
+          />
           <span>{footerText}</span>
           {pages.length > 0 && (
             <div className="flex flex-wrap justify-center gap-4">

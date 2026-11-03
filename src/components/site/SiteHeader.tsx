@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 
 interface MenuItem {
@@ -17,7 +18,6 @@ export default function SiteHeader({
   siteTitle: string;
   menuItems: MenuItem[];
 }) {
-  const [mainWord, ...rest] = siteTitle.split(".");
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -45,11 +45,15 @@ export default function SiteHeader({
   return (
     <header className="relative border-b border-border/60">
       <div className="container-page flex h-20 items-center justify-between">
-        <Link href="/" className="text-2xl font-extrabold tracking-tight" onClick={() => setOpen(false)}>
-          <span className="text-accent">{mainWord}</span>
-          {rest.length > 0 && (
-            <span className="align-super text-xs text-foreground">.{rest.join(".")}</span>
-          )}
+        <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
+          <Image
+            src="/setguullogo.png"
+            alt={siteTitle}
+            width={500}
+            height={122}
+            priority
+            className="h-10 w-auto"
+          />
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm font-semibold tracking-wide md:flex">

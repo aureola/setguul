@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { fieldClass, buttonPrimaryClass } from "@/components/admin/ui/styles";
@@ -42,9 +43,13 @@ function LoginForm() {
       onSubmit={handleSubmit}
       className="w-full max-w-sm rounded-xl border border-border bg-surface p-8"
     >
-      <h1 className="mb-1 text-2xl font-extrabold">
-        <span className="text-accent">setguul</span>.mn
-      </h1>
+      <Image
+        src="/setguullogo.png"
+        alt="setguul.mn"
+        width={500}
+        height={122}
+        className="mb-1 h-9 w-auto"
+      />
       <p className="mb-6 text-sm text-muted">Админ панелд нэвтрэх</p>
 
       {error && (
