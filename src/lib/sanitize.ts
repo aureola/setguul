@@ -94,3 +94,13 @@ export function sanitizeBannerHtml(html: string): string {
 export function sanitizePlainText(text: string): string {
   return sanitizeHtml(text, { allowedTags: [], allowedAttributes: {} }).trim();
 }
+
+/** Plain-text excerpt for meta descriptions, e.g. when an article has no
+ * manually written excerpt. Truncates on a word boundary. */
+export function extractExcerpt(html: string, maxLength = 160): string {
+  const text = sanitizePlainText(html).replace(/\s+/g, " ").trim();
+  if (text.length <= maxLength) return text;
+  const truncated = text.slice(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(" ");
+  return (lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated).trim() + "…";
+}

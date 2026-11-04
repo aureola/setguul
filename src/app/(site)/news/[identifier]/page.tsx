@@ -7,7 +7,7 @@ import { getArticlePath } from "@/lib/article-url";
 import { getActiveBanners } from "@/lib/banners";
 import { getCommentsByArticle } from "@/lib/comments";
 import { formatDateTime } from "@/lib/format";
-import { sanitizeArticleHtml } from "@/lib/sanitize";
+import { sanitizeArticleHtml, extractExcerpt } from "@/lib/sanitize";
 import { getSetting } from "@/lib/settings";
 import { getSiteUrl } from "@/lib/site-url";
 import { auth } from "@/lib/auth";
@@ -30,7 +30,7 @@ export async function generateMetadata({
   if (!article) return {};
 
   const path = getArticlePath(article, urlMode);
-  const description = article.excerpt ?? undefined;
+  const description = article.excerpt || extractExcerpt(article.content) || undefined;
   const images = article.coverImage ? [{ url: article.coverImage }] : undefined;
 
   return {
