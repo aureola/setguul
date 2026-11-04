@@ -3,27 +3,27 @@
 import { useState } from "react";
 import { CloseIcon } from "./ui/editor-icons";
 import { buttonPrimaryClass, buttonSecondaryClass } from "./ui/styles";
-import { extractEmbedSrc } from "@/lib/embed";
+import { extractEmbed } from "@/lib/embed";
 
 export default function EmbedModal({
   onClose,
   onInsert,
 }: {
   onClose: () => void;
-  onInsert: (src: string) => void;
+  onInsert: (src: string, width: number | null, height: number | null) => void;
 }) {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   function handleInsert() {
-    const src = extractEmbedSrc(code);
-    if (!src) {
+    const embed = extractEmbed(code);
+    if (!embed) {
       setError(
         "Энэ кодыг оруулах боломжгүй. Зөвхөн YouTube, Vimeo, SoundCloud, Spotify, Google Maps, Facebook-ийн embed код эсвэл холбоос дэмжигдэнэ.",
       );
       return;
     }
-    onInsert(src);
+    onInsert(embed.src, embed.width, embed.height);
   }
 
   return (

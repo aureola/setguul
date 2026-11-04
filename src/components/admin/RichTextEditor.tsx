@@ -174,9 +174,9 @@ function Toolbar({ editor }: { editor: Editor }) {
   }, [editor, linkModal]);
 
   const insertEmbed = useCallback(
-    (src: string) => {
+    (src: string, width: number | null, height: number | null) => {
       focusPastNodeSelection();
-      editor.chain().focus().setEmbed(src).run();
+      editor.chain().focus().setEmbed(src, width, height).run();
       setEmbedModalOpen(false);
     },
     [editor, focusPastNodeSelection],

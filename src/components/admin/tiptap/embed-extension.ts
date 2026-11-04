@@ -7,7 +7,7 @@ export interface EmbedOptions {
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     embed: {
-      setEmbed: (src: string) => ReturnType;
+      setEmbed: (src: string, width?: number | null, height?: number | null) => ReturnType;
     };
   }
 }
@@ -25,28 +25,40 @@ const Embed = Node.create<EmbedOptions>({
   addAttributes() {
     return {
       src: { default: null },
+      // Preserve the source iframe's own aspect ratio (e.g. a portrait
+      // Facebook Reel) instead of always forcing 16:9, which would squash
+      // tall video into a short wide box.
+      width: { default: null },
+      height: { default: null },
     };
   },
 
   parseHTML() {
+    const getAttrs = (el: Element) => ({
+      src: (el as HTMLElement).getAttribute("src"),
+      width: (el as HTMLElement).getAttribute("width"),
+      height: (el as HTMLElement).getAttribute("height"),
+    });
     return [
-      {
-        tag: "div[data-embed] iframe",
-        getAttrs: (el) => ({ src: (el as HTMLElement).getAttribute("src") }),
-      },
+      { tag: "div[data-embed] iframe", getAttrs },
       // A bare <iframe>, e.g. pasted as raw HTML via the "HTML код" modal
       // rather than inserted through the embed-link flow.
-      {
-        tag: "iframe",
-        getAttrs: (el) => ({ src: (el as HTMLElement).getAttribute("src") }),
-      },
+      { tag: "iframe", getAttrs },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
+    const width = Number(HTMLAttributes.width);
+    const height = Number(HTMLAttributes.height);
+    const aspectRatio = width > 0 && height > 0 ? `${width} / ${height}` : undefined;
+
     return [
       "div",
-      { "data-embed": "", class: "embed-wrapper" },
+      {
+        "data-embed": "",
+        class: "embed-wrapper",
+        style: aspectRatio ? `aspect-ratio: ${aspectRatio}` : undefined,
+      },
       [
         "iframe",
         mergeAttributes(this.options.HTMLAttributes, {
@@ -63,9 +75,9 @@ const Embed = Node.create<EmbedOptions>({
   addCommands() {
     return {
       setEmbed:
-        (src: string) =>
+        (src: string, width = null, height = null) =>
         ({ commands }) =>
-          commands.insertContent({ type: this.name, attrs: { src } }),
+          commands.insertContent({ type: this.name, attrs: { src, width, height } }),
     };
   },
 });

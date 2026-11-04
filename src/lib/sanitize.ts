@@ -30,7 +30,7 @@ export function sanitizeArticleHtml(html: string): string {
       h4: ["style"],
       th: ["colspan", "rowspan"],
       td: ["colspan", "rowspan"],
-      div: ["data-embed", "class"],
+      div: ["data-embed", "class", "style"],
       iframe: ["src", "frameborder", "allow", "allowfullscreen", "loading"],
     },
     allowedStyles: {
@@ -43,6 +43,9 @@ export function sanitizeArticleHtml(html: string): string {
       mark: {
         "background-color": SAFE_COLOR_PATTERNS,
         color: [/^inherit$/],
+      },
+      div: {
+        "aspect-ratio": [/^[\d.]+\s*\/\s*[\d.]+$/],
       },
     },
     allowedSchemes: ["http", "https", "mailto"],
