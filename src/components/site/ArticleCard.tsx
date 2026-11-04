@@ -51,7 +51,7 @@ export default function ArticleCard({ index, article, urlMode = "slug" }: Articl
             {article.categories[0].nameMn}
           </span>
         )}
-        <h3 className="mt-2 text-base font-extrabold leading-snug group-hover:text-accent">
+        <h3 className="mt-2 line-clamp-3 text-base font-extrabold leading-snug group-hover:text-accent">
           {article.title}
         </h3>
         {article.publishedAt && (
