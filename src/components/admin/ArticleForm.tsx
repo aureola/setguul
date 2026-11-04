@@ -56,9 +56,7 @@ export default function ArticleForm({
   const [coverImage, setCoverImage] = useState<string | null>(
     initial?.coverImage ?? null,
   );
-  const [categoryIds, setCategoryIds] = useState<string[]>(
-    initial?.categoryIds ?? (categories[0] ? [categories[0].id] : []),
-  );
+  const [categoryIds, setCategoryIds] = useState<string[]>(initial?.categoryIds ?? []);
   const [status, setStatus] = useState<"DRAFT" | "PUBLISHED">(
     initial?.status ?? (canPublish ? "PUBLISHED" : "DRAFT"),
   );
