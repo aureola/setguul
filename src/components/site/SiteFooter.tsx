@@ -11,11 +11,19 @@ export default function SiteFooter({
   siteTitle,
   footerText,
   pages,
+  facebookUrl,
+  instagramUrl,
+  youtubeUrl,
 }: {
   siteTitle: string;
   footerText: string;
   pages: FooterPage[];
+  facebookUrl?: string;
+  instagramUrl?: string;
+  youtubeUrl?: string;
 }) {
+  const hasSocialLinks = facebookUrl || instagramUrl || youtubeUrl;
+
   return (
     <footer className="mt-16 border-t border-border/60">
       <div className="container-page flex flex-col gap-6 py-12 md:flex-row md:items-center md:justify-between">
@@ -27,17 +35,43 @@ export default function SiteFooter({
         </div>
         <SubscribeForm />
         */}
-        <div className="flex items-center gap-4">
-          <a href="#" aria-label="Facebook" className="text-muted transition hover:text-accent">
-            <FacebookIcon />
-          </a>
-          <a href="#" aria-label="Instagram" className="text-muted transition hover:text-accent">
-            <InstagramIcon />
-          </a>
-          <a href="#" aria-label="Youtube" className="text-muted transition hover:text-accent">
-            <YoutubeIcon />
-          </a>
-        </div>
+        {hasSocialLinks && (
+          <div className="flex items-center gap-4">
+            {facebookUrl && (
+              <a
+                href={facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="text-muted transition hover:text-accent"
+              >
+                <FacebookIcon />
+              </a>
+            )}
+            {instagramUrl && (
+              <a
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="text-muted transition hover:text-accent"
+              >
+                <InstagramIcon />
+              </a>
+            )}
+            {youtubeUrl && (
+              <a
+                href={youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Youtube"
+                className="text-muted transition hover:text-accent"
+              >
+                <YoutubeIcon />
+              </a>
+            )}
+          </div>
+        )}
       </div>
       <div className="border-t border-border/60 py-6">
         <div className="container-page flex flex-col items-center justify-between gap-3 text-xs text-muted md:flex-row">

@@ -142,6 +142,40 @@ export default function SettingsForm({ initial }: { initial: Record<string, stri
           />
         </label>
 
+        <div className="space-y-3 border-t border-border pt-5">
+          <h3 className="text-sm font-semibold">Сошиал холбоосууд (хоосон бол footer-т харагдахгүй)</h3>
+
+          <label className="block text-sm font-semibold">
+            Facebook
+            <input
+              value={values.social_facebook_url ?? ""}
+              onChange={(e) => update("social_facebook_url", e.target.value)}
+              placeholder="https://facebook.com/..."
+              className={`mt-1.5 font-normal ${fieldClass}`}
+            />
+          </label>
+
+          <label className="block text-sm font-semibold">
+            Instagram
+            <input
+              value={values.social_instagram_url ?? ""}
+              onChange={(e) => update("social_instagram_url", e.target.value)}
+              placeholder="https://instagram.com/..."
+              className={`mt-1.5 font-normal ${fieldClass}`}
+            />
+          </label>
+
+          <label className="block text-sm font-semibold">
+            YouTube
+            <input
+              value={values.social_youtube_url ?? ""}
+              onChange={(e) => update("social_youtube_url", e.target.value)}
+              placeholder="https://youtube.com/..."
+              className={`mt-1.5 font-normal ${fieldClass}`}
+            />
+          </label>
+        </div>
+
         <div className="flex items-center gap-3 border-t border-border pt-5">
           <button type="submit" disabled={saving} className={buttonPrimaryClass}>
             {saving ? "Хадгалж байна..." : "Хадгалах"}

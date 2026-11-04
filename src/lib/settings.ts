@@ -11,6 +11,9 @@ const DEFAULTS: Record<string, string> = {
   article_url_mode: "slug",
   offline_enabled: "false",
   offline_message: "Сайт түр хугацаанд ажиллахгүй байна. Удахгүй эргэж орж ирнэ үү.",
+  social_facebook_url: "",
+  social_instagram_url: "",
+  social_youtube_url: "",
 };
 
 export async function getSettings(): Promise<Record<string, string>> {

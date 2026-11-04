@@ -27,7 +27,14 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     >
       <SiteHeader siteTitle={settings.site_title} menuItems={menuItems} />
       <main className="flex-1">{children}</main>
-      <SiteFooter siteTitle={settings.site_title} footerText={settings.footer_text} pages={footerPages} />
+      <SiteFooter
+        siteTitle={settings.site_title}
+        footerText={settings.footer_text}
+        pages={footerPages}
+        facebookUrl={settings.social_facebook_url}
+        instagramUrl={settings.social_instagram_url}
+        youtubeUrl={settings.social_youtube_url}
+      />
     </div>
   );
 }

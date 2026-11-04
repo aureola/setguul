@@ -32,7 +32,7 @@ export default function UsefulReadsCarousel({
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-extrabold uppercase tracking-wide">Ашигтай уншигдах</h2>
+        <h2 className="text-xl font-extrabold uppercase tracking-wide">Шинэ мэдээ</h2>
         <div className="flex gap-2">
           <button
             type="button"
