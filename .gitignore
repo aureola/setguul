@@ -34,9 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
-# uploaded content
-/public/uploads/*
-!/public/uploads/.gitkeep
+# uploaded content (served via src/app/uploads/[...path]/route.ts, outside public/)
+/uploads/*
+!/uploads/.gitkeep
 
 # vercel
 .vercel

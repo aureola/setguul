@@ -10,7 +10,9 @@
 - MySQL 8 + Prisma ORM
 - NextAuth.js v5 (Credentials, JWT session)
 - Tailwind CSS v4
-- Зураг хадгалалт: `public/uploads/` (локал диск)
+- Зураг/видео хадгалалт: `uploads/` (локал диск, `public/`-с гадна — `src/app/uploads/[...path]/route.ts`
+  замаар Node app өөрөө сервэрлэдэг тул Apache-ийн статик файл серв хийх давхарт
+  шинэ upload "түр зуур харагдахгүй байх" эрсдэл үгүй)
 
 ## Локал хөгжүүлэлт
 
@@ -96,7 +98,11 @@ npm start
      Нууц үгэнд `@`, `#`, `:` зэрэг тэмдэг байвал URL encoding хийнэ.
    - `NEXTAUTH_SECRET` — `openssl rand -base64 32`-оор үүсгэсэн урт нууц түлхүүр
    - `NEXTAUTH_URL` — сайтын бодит домэйн (жишээ нь `https://setguul.mn`)
-   - `UPLOAD_DIR` — `public/uploads` (өөрчлөх шаардлагагүй)
+3.1. **Хэрэв өмнө нь `public/uploads/`-д файл хуримтлуулсан хуучин deploy-г
+   шинэчилж байгаа бол нэг удаа**: `public/uploads/` доторх бүх файлыг
+   (`.gitkeep`-ээс бусдыг) Application root-ын `uploads/` фолдер руу зөөнө
+   (`mv public/uploads/* uploads/`). Үүнээс хойш зураг/видео `uploads/`-д л
+   бичигдэнэ, `public/uploads/` ашиглагдахгүй.
 4. cPanel-ийн өгсөн "Enter to the virtual environment" командаар орж:
    ```bash
    npm install

@@ -4,6 +4,7 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { requirePermission, isApiUser } from "@/lib/api-auth";
 import { logAction } from "@/lib/audit";
+import { UPLOADS_ROOT, datePathForNow } from "@/lib/uploads";
 
 // Kept separate from /api/admin/upload (images) so the much larger size
 // limit here doesn't apply to every image-upload call site in the app.
@@ -34,14 +35,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Файлын хэмжээ 30MB-аас хэтрэхгүй байх ёстой" }, { status: 400 });
   }
 
-  const now = new Date();
-  const datePath = [
-    String(now.getFullYear()),
-    String(now.getMonth() + 1).padStart(2, "0"),
-    String(now.getDate()).padStart(2, "0"),
-  ].join("/");
+  const datePath = datePathForNow();
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads", datePath);
+  const uploadDir = path.join(UPLOADS_ROOT, datePath);
   await mkdir(uploadDir, { recursive: true });
 
   const filename = `${randomUUID()}.${ext}`;

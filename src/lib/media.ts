@@ -2,8 +2,7 @@ import { readdir, stat } from "fs/promises";
 import path from "path";
 import { prisma } from "@/lib/prisma";
 import { extractAllImageSrcs } from "@/lib/content-image";
-
-const UPLOADS_ROOT = path.join(process.cwd(), "public", "uploads");
+import { UPLOADS_ROOT } from "@/lib/uploads";
 
 export interface MediaUsage {
   type: "article" | "banner";

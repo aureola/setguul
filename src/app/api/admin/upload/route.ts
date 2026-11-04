@@ -4,6 +4,7 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { requireUser, isApiUser } from "@/lib/api-auth";
 import { logAction } from "@/lib/audit";
+import { UPLOADS_ROOT, datePathForNow } from "@/lib/uploads";
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -34,14 +35,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Файлын хэмжээ 5MB-аас хэтрэхгүй байх ёстой" }, { status: 400 });
   }
 
-  const now = new Date();
-  const datePath = [
-    String(now.getFullYear()),
-    String(now.getMonth() + 1).padStart(2, "0"),
-    String(now.getDate()).padStart(2, "0"),
-  ].join("/");
+  const datePath = datePathForNow();
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads", datePath);
+  const uploadDir = path.join(UPLOADS_ROOT, datePath);
   await mkdir(uploadDir, { recursive: true });
 
   const filename = `${randomUUID()}.${ext}`;
