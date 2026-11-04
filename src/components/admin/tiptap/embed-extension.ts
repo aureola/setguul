@@ -34,6 +34,12 @@ const Embed = Node.create<EmbedOptions>({
         tag: "div[data-embed] iframe",
         getAttrs: (el) => ({ src: (el as HTMLElement).getAttribute("src") }),
       },
+      // A bare <iframe>, e.g. pasted as raw HTML via the "HTML код" modal
+      // rather than inserted through the embed-link flow.
+      {
+        tag: "iframe",
+        getAttrs: (el) => ({ src: (el as HTMLElement).getAttribute("src") }),
+      },
     ];
   },
 
