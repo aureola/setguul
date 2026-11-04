@@ -19,7 +19,7 @@ export default function EmbedModal({
     const src = extractEmbedSrc(code);
     if (!src) {
       setError(
-        "Энэ кодыг оруулах боломжгүй. Зөвхөн YouTube, Vimeo, SoundCloud, Spotify, Google Maps-ийн embed код эсвэл холбоос дэмжигдэнэ.",
+        "Энэ кодыг оруулах боломжгүй. Зөвхөн YouTube, Vimeo, SoundCloud, Spotify, Google Maps, Facebook-ийн embed код эсвэл холбоос дэмжигдэнэ.",
       );
       return;
     }
@@ -43,7 +43,7 @@ export default function EmbedModal({
 
         <div className="flex flex-col gap-2 px-5 py-4">
           <label htmlFor="embed-code" className="text-sm text-muted">
-            &lt;iframe&gt; embed код эсвэл шууд холбоос (YouTube, Vimeo, SoundCloud, Spotify, Google Maps)
+            &lt;iframe&gt; embed код эсвэл шууд холбоос (YouTube, Vimeo, SoundCloud, Spotify, Google Maps, Facebook)
           </label>
           <textarea
             id="embed-code"

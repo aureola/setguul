@@ -7,6 +7,7 @@ export const ALLOWED_EMBED_HOSTS = [
   "w.soundcloud.com",
   "open.spotify.com",
   "www.google.com",
+  "www.facebook.com",
 ];
 
 export function extractEmbedSrc(input: string): string | null {
