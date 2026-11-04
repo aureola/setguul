@@ -31,7 +31,7 @@ export default function Hero({ article, urlMode = "slug" }: HeroProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
 
         <div className="relative z-10 flex h-full min-h-[520px] flex-col justify-between p-8 md:p-12">
-          <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="flex flex-col items-start gap-6 sm:flex-row sm:flex-wrap sm:justify-between">
             <div>
               {article?.publishedAt && (
                 <time className="text-xs font-bold tracking-widest text-muted">
@@ -43,7 +43,7 @@ export default function Hero({ article, urlMode = "slug" }: HeroProps) {
             </div>
 
             {article && (
-              <h1 className="max-w-xl text-5xl font-black uppercase leading-[0.95] md:text-6xl">
+              <h1 className="line-clamp-5 w-full min-w-0 break-words text-3xl font-black uppercase leading-[1.05] sm:max-w-xl sm:text-5xl sm:leading-[0.95] md:text-6xl">
                 {article.title}
               </h1>
             )}
