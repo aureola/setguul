@@ -69,8 +69,14 @@
 Datacom зэрэг нөөц хязгаартай hosting-ийн terminal дээр build хийхдээ:
 
 ```bash
+rm -rf .next
 RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 npm run build
 ```
+
+`.next`-ийг устгалгүй дахин build хийвэл Next.js заримдаа хуучин webpack
+cache-ээ дахин ашиглаж, HTML (server-side render) болон шинэ CSS хоёрын
+хооронд class hash зөрчил (жишээ нь фонт тохиргоо алга болох) үүсгэдэг тул
+production build болгонд `.next`-ийг цэвэрлэж байх.
 
 Эдгээр тохиргоо build үеийн зэрэгцээ ажиллагаа болон thread pool-ийг хязгаарлаж,
 серверийн санах ой/CPU-ийн ачааллыг багасгахад тусална. `npm start`-ийг Node.js
