@@ -21,6 +21,20 @@ export const metadata: Metadata = {
     template: "%s | Setguul.mn",
   },
   description: "Setguul.mn — мэдээ, мэдээлэл.",
+  openGraph: {
+    type: "website",
+    title: "Setguul.mn",
+    description: "Setguul.mn — мэдээ, мэдээлэл.",
+    siteName: "Setguul.mn",
+    locale: "mn_MN",
+    images: [{ url: "/og-image.jpg", width: 1260, height: 522 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Setguul.mn",
+    description: "Setguul.mn — мэдээ, мэдээлэл.",
+    images: ["/og-image.jpg"],
+  },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
