@@ -9,6 +9,7 @@ const DEFAULTS: Record<string, string> = {
   article_author_visibility: "all",
   comments_enabled: "true",
   article_url_mode: "slug",
+  category_page_size: "20",
   offline_enabled: "false",
   offline_message: "Сайт түр хугацаанд ажиллахгүй байна. Удахгүй эргэж орж ирнэ үү.",
   social_facebook_url: "",

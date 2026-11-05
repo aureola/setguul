@@ -100,6 +100,12 @@ export async function getArticlesByCategory(categorySlug: string, take = 20, ski
   return articles.map(withThumbnailFallback);
 }
 
+export async function countArticlesByCategory(categorySlug: string) {
+  return prisma.article.count({
+    where: { status: "PUBLISHED", categories: { some: { slug: categorySlug } } },
+  });
+}
+
 export async function getArticlesByAuthor(authorId: string, take = 40, skip = 0) {
   const articles = await prisma.article.findMany({
     where: { status: "PUBLISHED", authorId },

@@ -110,6 +110,18 @@ export default function SettingsForm({ initial }: { initial: Record<string, stri
           </select>
         </label>
 
+        <label className="block text-sm font-semibold">
+          Ангиллын хуудсанд нэг хуудаст харуулах мэдээний тоо
+          <input
+            type="number"
+            min={1}
+            max={100}
+            value={values.category_page_size ?? "20"}
+            onChange={(e) => update("category_page_size", e.target.value)}
+            className={`mt-1.5 font-normal ${fieldClass}`}
+          />
+        </label>
+
         <div className="space-y-3 border-t border-border pt-5">
           <label className="flex items-start gap-2.5 text-sm">
             <input
