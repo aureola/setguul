@@ -1,4 +1,7 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+
+export const SETTINGS_CACHE_TAG = "site-settings";
 
 const DEFAULTS: Record<string, string> = {
   site_title: "Setguul.mn",
@@ -17,16 +20,28 @@ const DEFAULTS: Record<string, string> = {
   social_youtube_url: "",
 };
 
+// Every page reads settings through this cache, so a DB round trip happens
+// once per revalidation window instead of once per page during a build —
+// the host's constrained thread count makes concurrent Prisma calls panic
+// (see next.config.ts).
+const getCachedSettings = unstable_cache(
+  async (): Promise<Record<string, string>> => {
+    const rows = await prisma.siteSetting.findMany();
+    const map = { ...DEFAULTS };
+    for (const row of rows) {
+      map[row.key] = row.value;
+    }
+    return map;
+  },
+  ["site-settings"],
+  { tags: [SETTINGS_CACHE_TAG], revalidate: 300 },
+);
+
 export async function getSettings(): Promise<Record<string, string>> {
-  const rows = await prisma.siteSetting.findMany();
-  const map = { ...DEFAULTS };
-  for (const row of rows) {
-    map[row.key] = row.value;
-  }
-  return map;
+  return getCachedSettings();
 }
 
 export async function getSetting(key: string): Promise<string> {
-  const row = await prisma.siteSetting.findUnique({ where: { key } });
-  return row?.value ?? DEFAULTS[key] ?? "";
+  const settings = await getCachedSettings();
+  return settings[key] ?? "";
 }

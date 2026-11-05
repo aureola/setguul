@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requirePermission, isApiUser } from "@/lib/api-auth";
 import { logAction } from "@/lib/audit";
+import { SETTINGS_CACHE_TAG } from "@/lib/settings";
 
 const schema = z.record(z.string(), z.string());
 
@@ -37,6 +39,8 @@ export async function PATCH(request: Request) {
     entityType: "SiteSetting",
     metadata: { keys: Object.keys(parsed.data) },
   });
+
+  revalidateTag(SETTINGS_CACHE_TAG, { expire: 0 });
 
   return NextResponse.json({ ok: true });
 }
