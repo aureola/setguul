@@ -46,7 +46,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "comments.manage",
     "media.manage",
   ],
-  EDITOR: ["article.create", "article.editOwn", "article.deleteOwn"],
+  EDITOR: ["article.create", "article.editOwn", "article.deleteOwn", "article.publish"],
 };
 
 export function hasPermission(role: Role, permission: Permission): boolean {
