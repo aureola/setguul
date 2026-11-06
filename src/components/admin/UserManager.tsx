@@ -7,8 +7,9 @@ import type { Role } from "@prisma/client";
 import Card from "./ui/Card";
 import Badge from "./ui/Badge";
 import { TableCard, theadRowClass, thClass, tdClass, trClass } from "./ui/Table";
-import { fieldClass, selectClass, buttonPrimaryClass, iconButtonEditClass } from "./ui/styles";
-import { EditIcon } from "./ui/icons";
+import { fieldClass, selectClass, buttonPrimaryClass, iconButtonEditClass, iconButtonDangerClass } from "./ui/styles";
+import { EditIcon, TrashIcon } from "./ui/icons";
+import { useConfirm } from "./useConfirm";
 
 interface UserRow {
   id: string;
@@ -21,6 +22,7 @@ interface UserRow {
 
 export default function UserManager({ initial }: { initial: UserRow[] }) {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -50,8 +52,24 @@ export default function UserManager({ initial }: { initial: UserRow[] }) {
     router.refresh();
   }
 
+  async function handleDelete(u: UserRow) {
+    const message =
+      u._count.articles > 0
+        ? `"${u.name}" хэрэглэгч ${u._count.articles} мэдээ нийтэлсэн тул устгах боломжгүй. Үүний оронд идэвхгүй болгох уу?`
+        : `"${u.name}" хэрэглэгчийг бүрмөсөн устгах уу?`;
+    if (!(await confirm(message))) return;
+    const res = await fetch(`/api/admin/users/${u.id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      alert(data?.error ?? "Устгахад алдаа гарлаа");
+      return;
+    }
+    router.refresh();
+  }
+
   return (
     <div className="space-y-8">
+      {ConfirmDialog}
       <Card className="max-w-md">
         <form onSubmit={handleCreate} className="space-y-3">
           <h2 className="font-bold">Шинэ хэрэглэгч</h2>
@@ -114,7 +132,7 @@ export default function UserManager({ initial }: { initial: UserRow[] }) {
               <td className={tdClass}>
                 <Badge variant={u.isActive ? "accent" : "muted"}>{u.isActive ? "Идэвхтэй" : "Идэвхгүй"}</Badge>
               </td>
-              <td className={`${tdClass} text-right`}>
+              <td className={`${tdClass} text-right space-x-1`}>
                 <Link
                   href={`/admin/users/${u.id}`}
                   title="Засах"
@@ -123,6 +141,21 @@ export default function UserManager({ initial }: { initial: UserRow[] }) {
                 >
                   <EditIcon />
                 </Link>
+                <button
+                  onClick={() => handleDelete(u)}
+                  disabled={!u.isActive}
+                  title={
+                    !u.isActive
+                      ? "Аль хэдийн идэвхгүй"
+                      : u._count.articles > 0
+                        ? "Идэвхгүй болгох"
+                        : "Устгах"
+                  }
+                  aria-label="Устгах"
+                  className={iconButtonDangerClass}
+                >
+                  <TrashIcon />
+                </button>
               </td>
             </tr>
           ))}

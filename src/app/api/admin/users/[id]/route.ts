@@ -58,14 +58,32 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     return NextResponse.json({ error: "Өөрийгөө устгах боломжгүй" }, { status: 400 });
   }
 
-  await prisma.user.update({ where: { id }, data: { isActive: false } });
+  const target = await prisma.user.findUnique({
+    where: { id },
+    select: { _count: { select: { articles: true } } },
+  });
+  if (!target) {
+    return NextResponse.json({ error: "Хэрэглэгч олдсонгүй" }, { status: 404 });
+  }
 
+  if (target._count.articles > 0) {
+    await prisma.user.update({ where: { id }, data: { isActive: false } });
+    await logAction({
+      userId: user.id,
+      action: "user.deactivate",
+      entityType: "User",
+      entityId: id,
+    });
+    return NextResponse.json({ ok: true, deactivated: true });
+  }
+
+  await prisma.user.delete({ where: { id } });
   await logAction({
     userId: user.id,
-    action: "user.deactivate",
+    action: "user.delete",
     entityType: "User",
     entityId: id,
   });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, deleted: true });
 }
