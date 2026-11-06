@@ -11,14 +11,16 @@ import { buttonPrimaryClass } from "@/components/admin/ui/styles";
 export default async function ArticlesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; author?: string; from?: string; to?: string }>;
+  searchParams: Promise<{ q?: string; author?: string; from?: string; to?: string; page?: string }>;
 }) {
   const session = await auth();
   const role = session!.user.role;
   const userId = session!.user.id;
   const canSeeAllAuthors = hasPermission(role, "article.editAny");
 
-  const { q, author, from, to } = await searchParams;
+  const { q, author, from, to, page: pageParam } = await searchParams;
+  const page = Math.max(1, Number(pageParam ?? 1));
+  const pageSize = 50;
 
   const where: Prisma.ArticleWhereInput = canSeeAllAuthors ? {} : { authorId: userId };
   if (canSeeAllAuthors && author) {
@@ -34,18 +36,33 @@ export default async function ArticlesPage({
     };
   }
 
-  const [articles, authors] = await Promise.all([
+  const [articles, total, authors] = await Promise.all([
     prisma.article.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      take: pageSize,
+      skip: (page - 1) * pageSize,
       include: {
         categories: { select: { nameMn: true } },
         author: { select: { name: true } },
         _count: { select: { comments: true } },
       },
     }),
+    prisma.article.count({ where }),
     prisma.user.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
   ]);
+
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const pageHref = (p: number) => {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (author) params.set("author", author);
+    if (from) params.set("from", from);
+    if (to) params.set("to", to);
+    params.set("page", String(p));
+    return `/admin/articles?${params.toString()}`;
+  };
 
   return (
     <div>
@@ -72,6 +89,24 @@ export default async function ArticlesPage({
           author: a.author,
         }))}
       />
+
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center gap-4 text-sm">
+          {page > 1 && (
+            <a href={pageHref(page - 1)} className="font-semibold text-accent hover:underline">
+              ← Өмнөх
+            </a>
+          )}
+          <span className="text-muted">
+            {page} / {totalPages}
+          </span>
+          {page < totalPages && (
+            <a href={pageHref(page + 1)} className="font-semibold text-accent hover:underline">
+              Дараах →
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 }
