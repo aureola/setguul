@@ -26,12 +26,20 @@ const DEFAULTS: Record<string, string> = {
 // (see next.config.ts).
 const getCachedSettings = unstable_cache(
   async (): Promise<Record<string, string>> => {
-    const rows = await prisma.siteSetting.findMany();
-    const map = { ...DEFAULTS };
-    for (const row of rows) {
-      map[row.key] = row.value;
+    try {
+      const rows = await prisma.siteSetting.findMany();
+      const map = { ...DEFAULTS };
+      for (const row of rows) {
+        map[row.key] = row.value;
+      }
+      return map;
+    } catch (error) {
+      // A DB hiccup (e.g. during a build's static prerendering) shouldn't
+      // fail the whole build — fall back to defaults; the next revalidation
+      // will pick up real values once the DB is reachable again.
+      console.error("Failed to load site settings, using defaults", error);
+      return { ...DEFAULTS };
     }
-    return map;
   },
   ["site-settings"],
   { tags: [SETTINGS_CACHE_TAG], revalidate: 300 },
