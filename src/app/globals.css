@@ -107,6 +107,51 @@ button:not(:disabled),
    typography palette; in the light admin theme that leaves near-white text
    on a white background, so re-point its color variables at our light-theme
    tokens instead of the dark colors Tailwind Typography bakes in. */
+/* Every site page except the home page uses a light gray reading background;
+   re-point the dark-theme tokens so header/footer stay black while content,
+   cards, and the sidebar read dark text on gray here. */
+.site-reading-surface {
+  background: #d4d4d4;
+  color: #1a1a1a;
+  --foreground: #1a1a1a;
+  --muted: #5a5a5a;
+  --border: #b3b3b3;
+  --surface: #c6c6c6;
+  --accent-contrast: #141414;
+}
+
+.site-reading-surface .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.site-reading-surface .bg-border\/30 {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.site-reading-surface a.group:hover h3 {
+  color: var(--muted);
+}
+
+.site-reading-surface .prose-invert {
+  --tw-prose-body: #1a1a1a;
+  --tw-prose-headings: #1a1a1a;
+  --tw-prose-lead: #1a1a1a;
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: #1a1a1a;
+  --tw-prose-counters: #5a5a5a;
+  --tw-prose-bullets: #5a5a5a;
+  --tw-prose-hr: #b3b3b3;
+  --tw-prose-quotes: #1a1a1a;
+  --tw-prose-quote-borders: #b3b3b3;
+  --tw-prose-captions: #5a5a5a;
+  --tw-prose-kbd: #1a1a1a;
+  --tw-prose-code: #1a1a1a;
+  --tw-prose-pre-code: #f5f5f5;
+  --tw-prose-pre-bg: #2b2b2b;
+  --tw-prose-th-borders: #b3b3b3;
+  --tw-prose-td-borders: #b3b3b3;
+}
+
 [data-admin-theme="light"] .prose-invert {
   --tw-prose-body: var(--foreground);
   --tw-prose-headings: var(--foreground);

@@ -106,7 +106,7 @@ export default function ArticleSidebar({
                             {article.categories[0].nameMn}
                           </span>
                         )} */}
-                        <h3 className="line-clamp-2 text-sm font-semibold leading-snug group-hover:text-accent">
+                        <h3 className="line-clamp-2 text-sm font-semibold leading-snug group-hover:text-muted">
                           {article.title}
                         </h3>
                         {article.publishedAt && (
